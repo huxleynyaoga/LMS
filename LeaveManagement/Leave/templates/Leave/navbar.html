@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+
+
+<html lang="en">
+
+
+    <head>
+
+        <meta charset="utf-8" />
+
+        <title>{% block title %}LMS{% endblock %}</title>
+
+        <meta name="viewport" content="width-device-width, initial-scale=1, maximum-scale=1"/>
+
+        <link href="https://bootswatch.com/5/simplex/bootstrap.css" rel="stylesheet">
+
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+        <script>
+          /* Make previous days and weekends inactive */
+          document.addEventListener("DOMContentLoaded", function() {
+              var today = new Date().toISOString().split('T')[0];
+              var startDateField = document.getElementById("start_date");
+              var endDateField = document.getElementById("end_date");
+      
+              // Set the minimum date for start_date and end_date to today
+              startDateField.setAttribute('min', today);
+              endDateField.setAttribute('min', today);
+      
+              // Disable weekends in the date inputs
+              function disableWeekends(dateField) {
+                  dateField.addEventListener('input', function() {
+                      var date = new Date(dateField.value);
+                      if (date.getDay() === 0 || date.getDay() === 6) { // 0 is Sunday, 6 is Saturday
+                          alert("Weekends (Saturday and Sunday) cannot be selected.");
+                          dateField.value = ''; // Clear the field if a weekend is selected
+                      }
+                  });
+              }
+      
+              // Apply the function to disable weekends on both fields
+              disableWeekends(startDateField);
+              disableWeekends(endDateField);
+      
+              // Update the minimum date of end_date whenever the start_date is changed
+              startDateField.addEventListener('change', function() {
+                  endDateField.setAttribute('min', startDateField.value);
+              });
+          });
+      
+          /* Calculate leave days automatically excluding weekends (Saturday and Sunday) */
+          document.addEventListener('DOMContentLoaded', function() {
+              function calculateLeaveDays() {
+                  const startDate = new Date(document.getElementById('{{ form.start_date.id_for_label }}').value);
+                  const endDate = new Date(document.getElementById('{{ form.end_date.id_for_label }}').value);
+                  let totalDays = 0;
+      
+                  if (startDate && endDate && endDate >= startDate) {
+                      let currentDate = new Date(startDate);
+                      while (currentDate <= endDate) {
+                          // Exclude weekends (Saturday: 6, Sunday: 0)
+                          if (currentDate.getDay() !== 0 && currentDate.getDay() !== 6) {
+                              totalDays++;
+                          }
+                          currentDate.setDate(currentDate.getDate() + 1);
+                      }
+                  }
+      
+                  document.getElementById('{{ form.total_leave_days.id_for_label }}').value = totalDays;
+              }
+      
+              document.getElementById('{{ form.start_date.id_for_label }}').addEventListener('change', calculateLeaveDays);
+              document.getElementById('{{ form.end_date.id_for_label }}').addEventListener('change', calculateLeaveDays);
+          });
+        </script>
+      
+
+    </head>
+
+    <body>
+      {% include 'Leave/messages.html' %}
+      {% if user.is_authenticated %}
+          <nav class="navbar bg-body-tertiary fixed-top">
+            <div class="container-fluid">
+              <span class="navbar-brand mb-0 h1">Leave Application Simplified</span>
+              <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+              </button>
+              <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
+                <div class="offcanvas-header">
+                  <h5 class="offcanvas-title" id="offcanvasNavbarLabel">{{ user.username }} &nbsp; <i class="fa-solid fa-user" style="color: #09eb05;"></i></h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
+                <div class="offcanvas-body">
+                  <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+                    <li class="nav-item">
+                      <a class="nav-link" href="{% url 'dashboard' %}">Home <i class="fa-solid fa-house"></i></a>
+                    </li>
+                    {% if user.is_superuser %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'pending' %}">Pending Approval<i class="fa-solid fa-clock"></i></a>
+                    </li>
+                    {% endif %}
+                    <li class="nav-item">
+                      <a class="nav-link" href="{% url 'login' %}">Logout <i class="fa-solid fa-arrow-right-from-bracket"></i></a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </nav>
+          
+      {% endif %}
+    
+
+        <div class="container-fluid mt-3">
+            {% block body %}
+            {% endblock %}
+        </div>
+      
+        <br>
+        <br>
+
+        <footer class="text-center mt-4 bg-body-tertiary">
+          <p>&copy; 2017 - <span id="year"></span>. All rights reserved.</p>
+        </footer>
+        
+        <script>
+          // Automatically calculate and display the current year
+          const yearElement = document.getElementById('year');
+          const currentYear = new Date().getFullYear();
+          yearElement.textContent = currentYear;
+        </script>
+        
+    </body>
+
+</html>

@@ -1,0 +1,186 @@
+{% extends 'Leave/navbar.html' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block body %}
+
+        <style>
+          .accordion-item {
+              border: none !important;  /* Removes the border for all accordion items */
+          }
+
+          #flush-collapseTwo .accordion-item,
+          #flush-collapseThree .accordion-item {
+              border: none !important;  /* Removes borders from Casual Leave and Annual Leave accordion items */
+          }
+
+          #flush-collapseTwo .accordion-button,
+          #flush-collapseThree .accordion-button {
+              border-right: none !important;
+              border-left: none !important;
+          }
+        </style>
+
+
+<br>
+<br>
+    
+
+      <div class="container ms-1 mt-2">
+        <!-- Button trigger application modal -->
+        <a href="{% url 'application' %}" class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#Apply">
+          Apply Leave <i class="fa-solid fa-square-plus"></i>
+        </a>
+      </div>
+
+    <div class="container-fluid shadow-lg border border-dark-subtle rounded mt-4">
+            <div class="col p-3">
+                <h4 class="text-center">Your Leave Applications.</h4>
+                <hr>
+                <div class="table-responsive" style="min-height: 350px; max-height: 350px; overflow-y: auto; position: relative;">
+                    <table class="table table-hover center mx-auto">
+                        <thead class="table-light" style="position: sticky; top: 0; background-color: white; z-index: 1;">
+                          <tr>
+                            <th scope="col">Leave Type</th>
+                            <th scope="col">Leave Duration</th>
+                            <th scope="col">Total Days</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Date of Application</th>
+                            <th scope="col">Reviewed by</th>
+                          </tr>
+                        </thead>
+                        <tbody class="table-group-divider">
+                        {% for pl in pendingl %}
+                          <tr>
+                            <td style="border-bottom: none;">{{pl.leave_type}}</td>
+                            <td style="border-bottom: none;">{{ pl.start_date }} to {{ pl.end_date }}</td>
+                            <td style="border-bottom: none;">{{pl.total_leave_days}}</td>
+                            <td style="border-bottom: none;">{{pl.get_status_display}}</td>
+                            <td style="border-bottom: none;">{{pl.date_of_application}}</td>
+                            <td style="border-bottom: none;">{{pl.reviewed_by}}</td>
+                          </tr>
+                          {% empty %}
+                            <tr><td colspan="6" class="text-center" style="border-bottom: none;">No leave applications found.</td></tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>        
+    </div>
+
+    <br>
+    
+    {% comment %}
+      
+  <div class="container m-auto">
+      <h4 class="text-center">Total Leave Days Used.</h4>
+      <hr>
+      <div class="accordion accordion-flush col" id="accordionFlushExample">
+        
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
+                <strong>Sick Leave</strong>
+              </button>
+            </h2>
+            <div id="flush-collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
+              <div class="accordion-body text-warning">{{sick}}</div>
+            </div>
+          </div>
+
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseTwo" aria-expanded="false" aria-controls="flush-collapseTwo">
+                <strong>Casual Leave<strong>
+              </button>
+            </h2>
+            <div id="flush-collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
+              <div class="accordion-body text-warning">{{casual}}</div>
+            </div>
+          </div>
+
+        <div class="accordion-item">
+          <h2 class="accordion-header">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseThree" aria-expanded="false" aria-controls="flush-collapseThree">
+              <strong>Annual Leave</strong>
+            </button>
+          </h2>
+          <div id="flush-collapseThree" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
+            <div class="accordion-body text-warning">{{annual}}</div>
+          </div>
+        </div>
+
+        <div class="accordion-item">
+          <h2 class="accordion-header">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseFour" aria-expanded="false" aria-controls="flush-collapseFour">
+              <strong>Maternity Leave</strong>
+            </button>
+          </h2>
+          <div id="flush-collapseFour" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
+            <div class="accordion-body text-warning">{{maternity}}</div>
+          </div>
+        </div>
+
+        <div class="accordion-item">
+          <h2 class="accordion-header">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseFive" aria-expanded="false" aria-controls="flush-collapseFive">
+              <strong>Paternity Leave</strong>
+            </button>
+          </h2>
+          <div id="flush-collapseFive" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
+            <div class="accordion-body text-warning">{{paternity}}</div>
+          </div>
+        </div>
+
+      </div>
+  </div>
+{% endcomment %}  
+  <br>
+
+  <div class="m-auto container-fluid shadow-lg border border-dark-subtle rounded p-5 overflow-scroll">
+
+    <h4 class="text-center">Total Leave Days Used.</h4>
+      <hr>
+      <div class="d-flex justify-content-center" style="width: 100%;">
+        <canvas id="myChart" width="400" height="400"></canvas>
+      </div>
+    
+      
+      <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+      
+      <script>
+        const ctx = document.getElementById('myChart');
+      
+        new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: ['Sick Leave', 'Casual Leave', 'Annual Leave', 'Maternity Leave', 'Paternity Leave'],
+            datasets: [{
+              label: 'Total Leave Days Used.',
+              data: [{{casual}}, {{annual}}, {{maternity}}, {{paternity}}],
+              borderWidth: 1
+            }]
+          },
+          options: {
+            maintainAspectRatio: false,
+            scales: {
+              y: {
+                beginAtZero: true
+              }
+            }
+          }
+        });
+      </script>
+
+      <style>
+        #myChart {
+            max-width: 400px;
+            max-height: 400px; 
+        }
+      </style>
+    
+  </div>
+
+    {% include 'Leave/application.html' %}
+
+{% endblock %}

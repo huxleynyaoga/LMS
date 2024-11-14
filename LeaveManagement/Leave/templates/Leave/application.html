@@ -1,0 +1,111 @@
+  <!-- Leave Application Modal -->
+
+    {% if messages %}
+            {% for message in messages %}
+                <p id="message-timer" class="alert alert-{{ message.tags }} float-center text-center message-text" style="position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; width: auto; padding: 10px 20px; border-radius: 5px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); font-size: 16px;">
+                    <i class="fa fa-check" aria-hidden="true"></i> &nbsp; {{ message }}
+                </p>
+            {% endfor %}
+    {% endif %}
+
+  <div class="modal fade modal-xl" id="Apply" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header text-center">
+            <h5 class="modal-title text-black" id="staticBackdropLabel">Kindly Fill The Form {{user.username|capfirst}}</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body bg-light text-dark">
+            <!-- FORM -->
+            <form method="POST" class="row g-3" action="{% url 'application' %}" autocomplete="off">
+                {% csrf_token %}
+
+                <!-- Leave Type Field -->
+                <div class="col-6">
+                    <div class="form-floating mb-3">
+                        {{ form.leave_type }}
+                        <label for="{{ form.leave_type.id_for_label }}">{{ form.leave_type.label }}</label>
+                    </div>
+                </div>
+
+                <!-- Department Field -->
+                <div class="col-6">
+                    <div class="form-floating mb-3">
+                        {{ form.department }}
+                        <label for="{{ form.department.id_for_label }}">{{ form.department.label }}</label>
+                    </div>
+                </div>
+
+                <!-- Leave Start Date Field -->
+                <div class="col-6">
+                    <div class="form-floating mb-3">
+                        {{ form.start_date }}
+                        <label for="{{ form.start_date.id_for_label }}">{{ form.start_date.label }}</label>
+                    </div>
+                </div>
+                
+                <!-- Leave End Date Field -->
+                <div class="col-6">
+                    <div class="form-floating mb-3">
+                        {{ form.end_date }}
+                        <label for="{{ form.end_date.id_for_label }}">{{ form.end_date.label }}</label>
+                    </div>
+                </div>
+
+                <!-- Total Leave Days Field -->
+                <div class="col-6">
+                    <div class="form-floating mb-3">
+                        {{ form.total_leave_days }}
+                        <label for="{{ form.total_leave_days.id_for_label }}">{{ form.total_leave_days.label }}</label>
+                    </div>
+                </div>
+
+                <!-- Supervisor Field -->
+                <div class="col-6">
+                    <div class="form-floating mb-3">
+                        {{ form.supervisor_name }}
+                        <label for="{{ form.supervisor_name.id_for_label }}">{{ form.supervisor_name.label }}</label>
+                    </div>
+                </div>
+
+                <!-- Officer Duties Field -->
+                <div class="col-6">
+                    <div class="form-floating mb-3">
+                        {{ form.officer_handing_over_duty_to }}
+                        <label for="{{ form.officer_handing_over_duty_to.id_for_label }}">{{ form.officer_handing_over_duty_to.label }}</label>
+                    </div>
+                </div>
+
+
+                <!-- Reason Field -->
+                <div class="col-6">
+                    <div class="form-floating mb-3">
+                        {{ form.reason }}
+                        <label for="{{ form.reason.id_for_label }}">{{ form.reason.label }}</label>
+                    </div>
+                </div>
+            
+
+                <div class="col-12">
+                    <button type="submit" class="btn btn-outline-success">Apply <i class="fa-solid fa-check-double"></i></button>
+                </div>
+
+            </form>
+
+        </div>
+        <div class="modal-footer">
+        <button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal">Close</button>
+        </div>
+    </div>
+    </div>
+</div>
+
+<!--
+<script>
+    setTimeout(function() {
+        var message = document.getElementById('message-timer');
+        if (message) {
+            message.style.display = 'none';
+        }
+    }, 3000); // Message will disappear after 3 seconds
+</script> -->
