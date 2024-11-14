@@ -60,7 +60,7 @@ def dashboard(request):
 
 
 # - Logout
-# Git testing 1 2 1 2
+
 def logout(request):
     auth.logout(request)
     return redirect('login')
