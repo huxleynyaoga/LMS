@@ -17,7 +17,7 @@ class LeaveApplication(models.Model):
         ('APPROVED', 'Approved'),
         ('DECLINED', 'Declined'),
     ]
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    applicant = models.ForeignKey(User, on_delete=models.CASCADE)
     leave_type = models.CharField(max_length=20, choices=LEAVE_TYPES)
     date_of_application = models.DateField(auto_now_add=True)
     start_date = models.DateField()
