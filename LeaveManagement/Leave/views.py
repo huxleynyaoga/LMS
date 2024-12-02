@@ -114,3 +114,4 @@ def approve(request, id):
             return redirect('pending')
     return render(request, 'Leave/pending.html', {'leave': leave})
 
+# Add other features
